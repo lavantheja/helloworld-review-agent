@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    command: uvicorn api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis                       # service name, not localhost
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ./repos:/workspace/repos               # the ONLY code it can see
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    command: arq worker.WorkerSettings
+    environment:
+      - REDIS_HOST=redis
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ./repos:/workspace/repos               # same mount, same sandbox
+    depends_on:
+      - redis

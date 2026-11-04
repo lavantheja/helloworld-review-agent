@@ -1,0 +1,16 @@
+# secrets — never commit
+.env
+
+# python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# generated outputs & traces
+*.jsonl
+REVIEW.md
+PROJECT_DOCS.md
+
+# runtime input (mounted at run time, not part of the service)
+repos/
